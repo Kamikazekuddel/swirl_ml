@@ -1,0 +1,171 @@
+- Class: meta
+  Course: Machine_Learning
+  Lesson: Metrics for Model Performance
+  Author: Konrad Wölms
+  Type: Standard
+  Organization: your organization's name goes here
+  Version: 2.4.3
+
+- Class: text
+  Output: In the first lesson we discussed how to train models using caret's
+    train function and how to make predictions with these models and caret's
+    predict function. In this lesson we'll discuss how to measure the quality
+    of our predictions using performance metrics.
+
+- Class: cmd_question
+  Output: Before we start with this topic let's quickly recap the command's from
+    of the last lesson. We again supplied you with a training set X_train,y_train
+    from the Boston housing data. Train a tree model on this data using the
+    rpart method and set trControl to cntrl and tuneGrid to tree_grid as is the
+    previous lesson. The last two settings will keep train's functionality simple
+    for now. Assign the final result to a variable mdl_tree.
+  
+  CorrectAnswer: mdl_tree <- train(X_train,y_train,method='rpart',trControl=cntrl,tuneGrid=tree_grid)
+  AnswerTests: omnitest(correctExpr="mdl_tree <- train(X_train,y_train,method='rpart',trControl=cntrl,tuneGrid=tree_grid)")
+  Hint: Type "mdl_tree <- train(X_train,y_train,method='rpart',trControl=cntrl,tuneGrid=tree_grid)"
+  
+- Class: cmd_question
+  Output: Now with the trained model predict house prices on X_test. Don't
+    assign the results to a variable.
+  CorrectAnswer: predict(mdl_tree,X_test)
+  AnswerTests: omnitest(correctExpr="predict(mdl_tree,X_test)")
+  Hint: Type "predict(mdl_tree,X_test)"
+
+- Class: text
+  Output: Now that we've recalled how to train and predict we'll look at predictions
+    of tow different models in comparison. One is the one you've just trained and
+    the other is a second tree model that we trained for you. We've stored
+    the predictions for the testset in the variables y_pred_tree1 and y_pred_tree2
+    respectively. y_test contains the ground truth values.
+
+- Class: figure
+  Output: As a first step let's look at the plot of predictions agains ground truth
+    values. We see that both models are quite simple tree models that can actually
+    only predict a finite set of different values, but besides that we would like
+    to know which model does the better job. You'll probably agree that it is hard
+    tell from the picture.
+  Figure: m1m2comp.R
+  FigureType: new
+
+- Class: text
+  Output: A common metric for regression problems is mean square error (mse).
+    It is calculated the mean of the squares of differences between predictions
+    and ground truth values. For mse lower values are always better than larger
+    ones. Such metrics are sometimes also referred to as loss functions,
+    such that the previous sentence rephrases to the intuitive statement
+    "smaller losses are better than larger losses".
+
+- Class: cmd_question
+  Output: Try to calculate mse now for y_pred_tree1. Remember that the
+    ground truth is stored in y_test.
+  CorrectAnswer: mean((y_test-y_pred_tree1)^2)
+  AnswerTests: omnitest(correctVal=mean((y_test-y_pred_tree1)^2))
+  Hint: One possibility would be "mean((y_test-y_pred_tree1)^2)"
+
+- Class: cmd_question
+  Output: Another common measure is percentage mean square error (pmse). The
+    difference to mse is that the differences relative to the ground truth value
+    are used instead of absolute differences. Try to calculate pmse for y_pred_tree1.
+    Remember relavtive differences -> square -> average.
+  CorrectAnswer: mean((y_pred_tree1/y_test - 1)^2)
+  AnswerTests: omnitest(correctVal= mean((y_pred_tree1/y_test - 1)^2))
+  Hint: One possibility would be "mean((y_pred_tree1/y_test - 1)^2))"
+
+- Class: cmd_question
+  Output: Unfortunately these absolute metrics don't tell us very much. Also
+    comparing two different metrics for the same model is not particularly
+    meaningful. On the other hand we can now use these metrics to compare
+    our two different predictions. We already perfored the calculations for
+    you and stored the results in the variable model_comp. Type this variable
+    into the prompt in order to see the content.
+  CorrectAnswer: model_comp
+  AnswerTests: omnitest(correctVal= model_comp)
+  Hint: Type "model_comp"
+  
+- Class: text
+  Output: As you may have suspected we actually see that tree 1 predicts better
+    under mse while tree 2 predicts better under pmse. This is a very important
+    point. Relative model performance can depend strongly on the used metric. It
+    is therefore important to choose a metric carefully and in particular to choose
+    it in alignment with business/project goals. Choosing an inadequate metric may
+    very well lead to inadequate models, even if they perform well under the given
+    metric.
+
+- Class: text
+  Output: To drive the point home lets consider the differences between mse and
+    pmse for a concrete example. Under mse a prediction of $400K while the ground
+    truth is $200K is just as bad as a prediction of $1,200K while the ground
+    truth is $1,000K. Under pmse the former would be 5 times as bad as the latter.
+    Which metric is preferred will depend on the particular but it will be a crutial
+    decision.
+    
+
+- Class: text
+  Output: We'll now change the topic slightly. Usually our main concern with models is how
+    well they perform on unseen data, where we use the test set as our proxy
+    for unseen data (which by definition we don't have yet). We therefore
+    measured the metrics on the test set. The problem is that if we now use this
+    information to select a model or change it's paramters we essentially used
+    information obtained from the test set, through the lense of our metric. We 
+    could therefore not use the testset as proxy for unseen data after using its
+    metric information. In order to avoid this problem the goal is to get an
+    as good as possible understanding of how well the model will do on the
+    unseen test data using only the seen training data.
+
+- Class: cmd_question
+  Output: So let's go ahead and calculate mse on the training set. In order to save you some
+    typing we defined a function "mse" for you that takes ground truth and prediction
+    as two separate vector arguments. Remember that for the training set you'll
+    have to predict on X_train using the model mdl_tree and the ground truth 
+    is given by y_train.
+  CorrectAnswer: mse(y_train,predict(mdl_tree,X_train))
+  AnswerTests: omnitest(correctVal= mse(y_train,predict(mdl_tree)))
+  Hint: Type "mse(y_train,predict(mdl_tree,X_train))"
+
+- Class: text
+  Output: This is clearly a lot lower than our test metric earlier. So it is does
+    not help us much in predicting how well our model will do on unseen data. More
+    advanced techniques are needed to estimate this. It is the subject of model
+    validation and will be adressed in the next lesseon.
+
+- Class: text
+  Output: The gap that we saw between the metric on the train set (seen data) and
+    the test (unseen data) is also often subject of analysis in the context of
+    what is called overfitting and unterfitting. This is another subject for a future
+    lesson.
+    
+- Class: mult_question
+  Output: Before we conclude this lesson we'll review the content with some
+    questions. Let's start. What is the best metric to measure the performance
+    of regression problems?
+  AnswerChoices: Mean squared error, because it is simple;
+    R^2 because it is bounded between 0 and 1;
+    Mean absolute deviation, because it has an awesome acronym (MAD);
+    You can't tell because it depends on the problem and business/project goals
+  CorrectAnswer: You can't tell because it depends on the problem and business/project goals
+  AnswerTests: omnitest(correctVal="You can't tell because it depends on the problem and business/project goals")
+  Hint: Remember that models might do better for one metric and worse for another.
+  
+- Class: mult_question
+  Output: Imagine you have a project where you need to make predictions using
+    regression. From the project side it is clear that the adverse effect of the
+    prediction errors proportional to the absolute deviation from the ground truth.
+    value. What would most likely be a good choice for a model performance metric.
+  AnswerChoices: Mean squared error (MSE), mean((y_pred-y_true)^2);
+    Percentage mean squared error (PMSE), mean((y_pred/y_true - 1)^2);
+    Mean absolute error (MAE), mean(abs(y_pred-y_true));
+    percentage mean absolute error (PMAE),  mean(abs(y_pred/y_true)-1)
+  CorrectAnswer: Mean absolute error (MAE),  mean(abs(y_pred-y_true))
+  AnswerTests: omnitest(correctVal="Mean absolute error (MAE), mean(abs(y_pred-y_true))")
+  Hint: We care about absolute deviations on the project side so the metric should
+    reflect that.
+
+- Class: text
+  Output: In this lesson we introduced the concept of performance metrics which
+    can be used to measure model performance. We've seen an example of how this
+    is used to compare performance of different models and pointed out how it
+    will be important for other topics such as prediction model performance
+    on unseen data (model validation) and analysing the performance differences
+    between seen and unseen data (underfitting/overfitting analysis). We also
+    discussed how the choice of metric is very important and should align with
+    project/business goals.

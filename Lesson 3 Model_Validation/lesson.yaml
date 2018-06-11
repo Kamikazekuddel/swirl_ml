@@ -1,0 +1,169 @@
+- Class: meta
+  Course: Machine_Learning
+  Lesson: Model Validation
+  Author: Konrad Wölms
+  Type: Standard
+  Organization: your organization's name goes here
+  Version: 2.4.3
+
+- Class: text
+  Output: This lesson introduces fundamental aspects of model validation in
+    machiene learning. Given a performance metric, the goal is to estimate a
+    model's performance on unseen data, without evaluating the model on this data.
+    
+- Class: text
+  Output: We'll again use the Boston housing data and train the model on the training
+    set X_train,y_train. We also have a test set X_test,y_test as a proxy for
+    unseen data. Our concrete goal is now to estimate how well the model will
+    perform on the test set using only the train set. Eventually we'll compare with
+    the performance on the test set in order see how well our validation methods
+    work.
+
+- Class: text
+  Output: The simplest approach to validation is splitting the training set into
+    a training part and a validation part. For this purpouse caret provides the
+    helper function createDataPartition. This function takes as a mandatory argument
+    the target vector and optionally a few other inputs. Notably it takes the fraction
+    p in which to split the data.
+    
+- Class: cmd_question
+  Output: Try this function now by passing to it y_train, a fraction p of 0.3 and the
+    list argument equal to FALSE. Assign the final result to the variable idx_val. 
+  CorrectAnswer: idx_val <- createDataPartition(y_train,p=0.3,list=FALSE)
+  AnswerTests: omnitest(correctExpr="idx_val <- createDataPartition(y_train,p=0.3,list=FALSE)")
+  Hint: Type "idx_val <- createDataPartition(y_train,p=0.3,list=FALSE)"
+
+- Class: cmd_question
+  Output: As the name suggest this is not the training data split yet, but a step
+    in that direction. Type head(idx_val) to have a look at the result.
+  CorrectAnswer: head(idx_val)
+  AnswerTests: omnitest(correctExpr="head(idx_val)")
+  Hint: Type "head(idx_val)"
+
+- Class: script
+  Output: This is the list of indeces that we'll be using as the validation set.
+    in order to split X_train we can simpy use R's indexing functionality for
+    data frames. A validation set is obtained as X_v <- X_train[idx_val,]. Now
+    in order to obtain our training set we have to take advantage of R's idexing
+    funcionality using negaitive idices, which simply exclude the corresponding
+    entries. Try this in the script that we opened for you. Then save the sript
+    and type submit() in the command line.
+  AnswerTests: test_train_val_split()
+  Hint: Type "X_t <- X_train[-idx_val,]" for training part of X and similar for y_t.
+  Script: train_val_split.R
+  
+
+- Class: script
+  Output: We will now use this validation split in order to estimate the model
+    performance on the unseen test set using the train and validation set. In
+    order to do that train the model on X_t and then predict the target on X_v,
+    and evaluate our metric on the prediction.
+    In order to see whether our efforts have been worth while we'll then train
+    the model again on X_train and predict on X_test and evaluate the metric.
+  AnswerTests: test_train_val_training()
+  Hint: Predict using predict(mdl,...) and calculate the error using mse(...,...)
+  Script: train_val_training.R
+
+- Class: text
+  Output: While our validation error is certainly less optimistic than the training
+    error we would still like to get a better estimate of the expected testing error.
+    One disadvantage with the train_validation method that we used is that it
+    is a little wastefull with the data. We only train on X_t and only measure
+    the error on X_v. A common method that adresses that issue is n-fold cross
+    validation (cv). The idea with cv is that we split our original data into
+    n parts (called folds), train the model on n-1 of them predict the error on the remaing part.
+    
+- Class: text
+  Output: Now in order to take full advantage of all the data this procedure is
+    then repeated for every combination of n-1 training folds. The validation errors
+    for each case are then averaged to obtain our final validation error estimate. 
+
+- Class: cmd_question
+  Output: caret again provides a helper function for creating cv folds, which is
+    called createFolds. Create 5 folds using createFolds using y_train as
+    the first argument and the number of folds as the second argument. Store the
+    result in the variable folds.
+  CorrectAnswer: folds <- createFolds(y_train,5)
+  AnswerTests: omnitest(correctExpr="folds <- createFolds(y_train,5)")
+  Hint: Type "folds <- createFolds(y_train,5)"
+
+- Class: cmd_question
+  Output: Similar to createDataPartition createFolds only returns indices of the
+    folds. To get an impression how many samples there are in each fold use
+    sapply on folds with the length function as its second argument.
+  CorrectAnswer: sapply(folds,length)
+  AnswerTests: omnitest(correctExpr="sapply(folds,length)")
+  Hint: Type "sapply(folds,length)"
+
+- Class: cmd_question
+  Output: As we can see the data is split pretty evenly into the different folds,
+    which in turn are simply named as Fold1-Fold5. We can access the folds inside
+    a list with R's dollar notation folds$Fold2 for the second fold for example.
+    How would you obtain the validation set from X_train corresponding to the
+    4th fold, i.e. all data in X_train contained in the 4th fold.
+    Don't store the result in a variable.
+  CorrectAnswer: X_train[folds$Fold4,]
+  AnswerTests: omnitest(correctExpr="X_train[folds$Fold4,]")
+  Hint: Type "X_train[folds$Fold4,]"
+
+- Class: cmd_question
+  Output: And how would you obtain the training set corresponding to the same
+    fold, i.e. all elements of X_train that are not contained in Fold4.
+  CorrectAnswer: X_train[-folds$Fold4,]
+  AnswerTests: omnitest(correctExpr="X_train[-folds$Fold4,]")
+  Hint: Type "X_train[-folds$Fold4,]"
+
+- Class: text
+  Output: With training and validation sets for a particular fold in place we
+    could now follow the procedure described earlier in the lesson, but this time
+    repeated for each fold. Afterwards we would average all the results. Luckily
+    caret's train function has this functionality already build into it. We'll
+    therefore discuss how to use the trControl argument of the train function to
+    perform n-fold cv. This functionality may not be sufficient for every application
+    and sometimes one needs to revert to the manual process described above, but
+    for the rest of the course we'll rely on train's built in cv.
+
+- Class: cmd_question
+  Output: trControl takes as an argument an object created with the trainControl
+    function. Create such an object with the method argument set to cv and the
+    number argument set to 5 and store it int the variable cv_cntrl.
+  CorrectAnswer: cv_cntrl<-trainControl(method='cv',number=5)
+  AnswerTests: omnitest(correctExpr="cv_cntrl<-trainControl(method='cv',number=5)")
+  Hint: Type "cv_cntrl<-trainControl(method='cv',number=5)"
+  
+- Class: text
+  Output: The method argument specifies the validation scheme and in the cntrl
+    object that we supplied to you so far this was simply set to 'none'. There
+    are several other validation schemes available, but we'll not go into them
+    in this course. You can check out the help if you are interested.
+
+- Class: cmd_question
+  Output: Now again train a regression tree (method rpart) on X_train/y_train
+    using cv_cntrl as the trControl argument. Additionally supply the
+    tuneGrid = tree_grid argument. Don't store the result in the variable mdl.
+  CorrectAnswer: mdl<-train(X_train,y_train,method='rpart',trControl=cv_cntrl,tuneGrid=tree_grid)
+  AnswerTests: omnitest(correctExpr="mdl<-train(X_train,y_train,method='rpart',trControl=cv_cntrl,tuneGrid=tree_grid)")
+  Hint: Type "mdl<-train(X_train,y_train,method='rpart',trControl=cv_cntrl,tuneGrid=tree_grid)"
+
+- Class: cmd_question
+  Output: In order to see the model validation that happend in the background
+    type print(mdl).
+  CorrectAnswer: print(mdl)
+  AnswerTests: omnitest(correctExpr="print(mdl)")
+  Hint: Type "print(mdl)"
+
+- Class: text
+  Output: Printing the model always displays information on the fitting process
+    according to it's configuration. One of the quantities we see is the
+    RMSE error across the folds. This stands for root mean squared error so we
+    can simply square it to relate it to mse, which we've been using so far.
+    We see that our validation error is a little more conservative than before
+    but still not as big as the test error. Especially for small dataset we don't
+    have any guarantees that at how accurately we can predict the test error.
+
+- Class: text
+  Output: Generally in order to predict the test error, the distribuation of training
+    data has to be similar to the distribution of test data. For small datasets
+    this might be false simply due to sampling error. For large datasets sampling
+    error should not be an issue and differens in the distribution of train and test
+    data will likely have systematic reasons.

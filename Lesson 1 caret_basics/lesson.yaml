@@ -1,0 +1,153 @@
+- Class: meta
+  Course: Machine Learning
+  Lesson: caret Basics
+  Author: Konrad Wölms
+  Type: Standard
+  Organization: your organization's name goes here
+  Version: 2.4.3
+
+- Class: text
+  Output: This is the first lesson in this machine learning course. So before
+    we begin begin a few general remarks are in order. The goal of this course
+    is training machine learning models and selecting the ones that perform best
+    in a systematic way. These are high level skills that should be transferable
+    across implementations and programming languages. That being said, we'll be
+    using the R specific caret package to ilustrate the content. Other languages
+    will have similar packages that can be usded for machine learning. Like
+    python's prominent sklearn for instance.
+    
+- Class: text
+  Output: A quick note on what this course does not try to do. It does not teach
+    how the algorithms of specific models work, but mearly employs the models.
+    It also doesn't address data wrangling, data cleaning and exploratory data
+    analysis. As a consequence we'll often use base R for functionality that is
+    not directly related to the course's content, while a real life application
+    might use more advanced packages (like the tidyverse packages) in some
+    situations.
+
+- Class: text
+  Output: This lesson explains the basics of caret. caret is a frontend package
+    that offers a consistent api for many different machine learning models that
+    are implemented in a variety of R packages.
+
+- Class: text
+  Output: caret also offers functionality to support preprocessing.
+    The goal of this leasson is the ability to quickly preprocess
+    data and train different simple models using caret. This forms
+    the basis for model evaluation and model selection in the
+    following lessons.
+
+- Class: cmd_question
+  Output: To demonstrate the strength of caret we will
+    now train two simple models on the BonstonHousing
+    dataset from the mlbench package. We loaded the dataset
+    for you and provided the variables X_train, y_train,
+    X_test and y_test for you. To get a feeling for the
+    data type str(X_train).
+  CorrectAnswer: str(X_train)
+  AnswerTests: omnitest(correctExpr='str(X_train)')
+  Hint: Type "str(X_train)"
+
+- Class: cmd_question
+  Output: We see that we have 254 observations with 13 features, most of which
+    are numerical. Now type str(y_train) to look at the targets.
+  CorrectAnswer: str(y_train)
+  AnswerTests: omnitest(correctExpr='str(y_train)')
+  Hint: Type "str(y_train)"
+  
+- Class: text
+  Output: The target variable is also numeric so we have a regression problem.
+    The target corresponds to the median value of owner-occupied homes in
+    thousands of USD. So the purpouse of this regression problem is to predict
+    housing prices. More information on the dataset can be found in the help
+    by typing '?BonstonHousing'.
+    
+- Class: cmd_question
+  Output: We will now train our first regression model. For this use the
+    function train and apply it to X_train,y_train and give it an additional
+    argument method='glm' that instructs the function to fit a linear model.
+    Assign the final result to mdl_ln.
+  CorrectAnswer: mdl_ln <- train(X_train,y_train,method='glm')
+  AnswerTests: omnitest(correctExpr="mdl_ln <- train(X_train,y_train,method='glm')")
+  Hint: Type "mdl_ln <- train(X_train,y_train,method='glm')"
+  
+- Class: cmd_question
+  Output: Congratulations, you've just trained your first model using caret.
+    Now it is time to make predictions using this model. For this use the predict
+    function and apply it to our model mdl_ln and the argument newdata = X_test.
+    Assign the result to y_pred_ln.
+  CorrectAnswer: y_pred_ln<- predict(mdl_ln,newdata=X_test)
+  AnswerTests: omnitest(correctExpr="y_pred_ln<- predict(mdl_ln,newdata=X_test)")
+  Hint: Type "y_pred_ln<- predict(mdl_ln,newdata=X_test)"
+  
+- Class: figure
+  Output: We have made a plot comparing the predictions to the actual target
+    values on the test set. We also insertet a line with slope one into the plot.
+    For perfect predicitons we would expect that all points fall on that line.
+    In reality, like in our example this will never be the case and in later
+    lessons we'll explore how to measure our models performance.
+  Figure: linearModelPrediction.R
+  FigureType: new
+
+- Class: cmd_question
+  Output: caret's train function actually does a little more than just fitting
+    a single model. In fact it performs some model slection/model performance
+    measuring in the background. Future lessons will explain how to take advantage
+    of this, but for now we'll supply additional arguments to the train function
+    in order to suppress this behavious for now.
+    To try this out train a regression tree on the same data. Use the method rpart
+    and additionally set the variables trControl = cntrl and tuneGrid = tree_grid,
+    where we defined the configuration variabels cntrl and tree_grid for you.
+    In order to save some typing rember that you can use tab completion.
+  
+  CorrectAnswer: mdl_tree <- train(X_train,y_train,method='rpart',trControl=cntrl,tuneGrid=tree_grid)
+  AnswerTests: omnitest(correctExpr="mdl_tree <- train(X_train,y_train,method='rpart',trControl=cntrl,tuneGrid=tree_grid)")
+  Hint: Type "mdl_tree <- train(X_train,y_train,method='rpart',trControl=cntrl,tuneGrid=tree_grid)"
+  
+- Class: cmd_question
+  Output: This shows the use of the new arguments and
+    illustrates how easily we can switch between different kinds of
+    models in caret. Prediction is just as easy with the new model as with the old.
+    Make new predictions using predict and the arguments mdl_tree and 
+    newdata=X_test. Store the results in a new variable y_pred_rf.
+  CorrectAnswer: y_pred_tree<- predict(mdl_tree,newdata=X_test)
+  AnswerTests: omnitest(correctExpr="y_pred_tree<- predict(mdl_tree,newdata=X_test)")
+  Hint: Type "y_pred_tree<- predict(mdl_tree,newdata=X_test)"
+
+- Class: figure
+  Output: We've added the predictions of the second model to the plot in red.
+    One can see a qualitatively that the predictions and their accuracy differ,
+    and we'll quantify this in future lessons.
+  Figure: secondModelPoints.R
+  FigureType: add
+  
+- Class: mult_question
+  Output: Before we conclude this lesson we'll check whether you understood the
+    basic structure behind caret. Which of the following would train a random
+    forest on our data.
+  AnswerChoices: train(X_train,y_train,method='rf');randomForest(X_train,y_train);RandomForestRegressor().fit(X_train,y_train)
+  CorrectAnswer: train(X_train,y_train,method='rf')
+  AnswerTests: omnitest(correctVal="train(X_train,y_train,method='rf')")
+  Hint: Remember how we trained the other models.
+  
+- Class: mult_question
+  Output: What do you think the command train(X_train,y_train,method='svmLinear') does?
+  AnswerChoices: Trains a support vector machine on our data; Prepares our data for machine learning at a later time; Measures the performance of the 'svmLinear' model
+  CorrectAnswer: Trains a support vector machine on our data
+  AnswerTests: omnitest(correctVal='Trains a support vector machine on our data')
+  Hint: Try again.
+  
+- Class: Text
+  Output: As a final note, we mentioned that caret is a frontend package, so it
+    actually relies on other packages to do the heavy liftng. In case the
+    required packages for a particular model are not installed on your machine
+    caret will nicely ask you whether you want to install them. To get an
+    overview off the available models in caret (possible arguments of train's
+    method argument) you can call the R help on the topic "models" (either type
+    ?models or type models in the help pane)
+  
+- Class: Text
+  Output: This concludes our lesson, where your got a first impression of why
+    caret is a great tool to work with several machine learnin models in a unified
+    framework.
+    
