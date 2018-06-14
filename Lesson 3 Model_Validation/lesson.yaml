@@ -8,7 +8,7 @@
 
 - Class: text
   Output: This lesson introduces fundamental aspects of model validation in
-    machiene learning. Given a performance metric, the goal is to estimate a
+    machine learning. Given a performance metric, the goal is to estimate a
     model's performance on unseen data, without evaluating the model on this data.
     
 - Class: text
@@ -21,7 +21,7 @@
 
 - Class: text
   Output: The simplest approach to validation is splitting the training set into
-    a training part and a validation part. For this purpouse caret provides the
+    a training part and a validation part. For this purpose caret provides the
     helper function createDataPartition. This function takes as a mandatory argument
     the target vector and optionally a few other inputs. Notably it takes the fraction
     p in which to split the data.
@@ -41,11 +41,11 @@
   Hint: Type "head(idx_val)"
 
 - Class: script
-  Output: This is the list of indeces that we'll be using as the validation set.
-    in order to split X_train we can simpy use R's indexing functionality for
+  Output: This is the list of indices that we'll be using as the validation set.
+    in order to split X_train we can simply use R's indexing functionality for
     data frames. A validation set is obtained as X_v <- X_train[idx_val,]. Now
-    in order to obtain our training set we have to take advantage of R's idexing
-    funcionality using negaitive idices, which simply exclude the corresponding
+    in order to obtain our training set we have to take advantage of R's indexing
+    functionality using negative indices, which simply exclude the corresponding
     entries. Try this in the script that we opened for you. Then save the sript
     and type submit() in the command line.
   AnswerTests: test_train_val_split()
@@ -58,7 +58,7 @@
     performance on the unseen test set using the train and validation set. In
     order to do that train the model on X_t and then predict the target on X_v,
     and evaluate our metric on the prediction.
-    In order to see whether our efforts have been worth while we'll then train
+    In order to see whether our efforts have been worthwhile we'll then train
     the model again on X_train and predict on X_test and evaluate the metric.
   AnswerTests: test_train_val_training()
   Hint: Predict using predict(mdl,...) and calculate the error using mse(...,...)
@@ -68,10 +68,10 @@
   Output: While our validation error is certainly less optimistic than the training
     error we would still like to get a better estimate of the expected testing error.
     One disadvantage with the train_validation method that we used is that it
-    is a little wastefull with the data. We only train on X_t and only measure
-    the error on X_v. A common method that adresses that issue is n-fold cross
+    is a little wasteful with the data. We only train on X_t and only measure
+    the error on X_v. A common method that addresses that issue is n-fold cross
     validation (cv). The idea with cv is that we split our original data into
-    n parts (called folds), train the model on n-1 of them predict the error on the remaing part.
+    n parts (called folds), train the model on n-1 of them predict the error on the remaining part.
     
 - Class: text
   Output: Now in order to take full advantage of all the data this procedure is
@@ -125,8 +125,8 @@
 
 - Class: cmd_question
   Output: trControl takes as an argument an object created with the trainControl
-    function. Create such an object with the method argument set to cv and the
-    number argument set to 5 and store it int the variable cv_cntrl.
+    function. Create such an object with the method argument set to 'cv' and the
+    number argument set to 5 and store it in the variable cv_cntrl.
   CorrectAnswer: cv_cntrl<-trainControl(method='cv',number=5)
   AnswerTests: omnitest(correctExpr="cv_cntrl<-trainControl(method='cv',number=5)")
   Hint: Type "cv_cntrl<-trainControl(method='cv',number=5)"
@@ -138,7 +138,7 @@
     in this course. You can check out the help if you are interested.
 
 - Class: cmd_question
-  Output: Now again train a regression tree (method rpart) on X_train/y_train
+  Output: Now again train a regression tree (method 'rpart') on X_train/y_train
     using cv_cntrl as the trControl argument. Additionally supply the
     tuneGrid = tree_grid argument. Don't store the result in the variable mdl.
   CorrectAnswer: mdl<-train(X_train,y_train,method='rpart',trControl=cv_cntrl,tuneGrid=tree_grid)
@@ -154,7 +154,7 @@
 
 - Class: text
   Output: Printing the model always displays information on the fitting process
-    according to it's configuration. One of the quantities we see is the
+    according to its configuration. One of the quantities we see is the
     RMSE error across the folds. This stands for root mean squared error so we
     can simply square it to relate it to mse, which we've been using so far.
     We see that our validation error is a little more conservative than before
@@ -162,8 +162,34 @@
     have any guarantees that at how accurately we can predict the test error.
 
 - Class: text
-  Output: Generally in order to predict the test error, the distribuation of training
+  Output: Generally in order to predict the test error, the distribution of training
     data has to be similar to the distribution of test data. For small datasets
     this might be false simply due to sampling error. For large datasets sampling
-    error should not be an issue and differens in the distribution of train and test
-    data will likely have systematic reasons.
+    error should not be an issue and differences in the data’s train and test distribution will likely have systematic reasons.
+    
+- Class: mult_question
+  Output: Let us conclude this lesson with a few test questions. Many time does
+    caret's train function train the model when you use n-fold cv.
+  AnswerChoices: 1 time;2 times;n times, once for each fold;
+    n+1 times, once for each fold and once for all the data
+  CorrectAnswer: n+1 times, once for each fold and once for all the data
+  AnswerTests: omnitest(correctVal="n+1 times, once for each fold and once for all the data")
+  Hint: Remember that the metric is averaged over predictions on all folds, but
+    all training data should be used to make out of sample predictions.
+
+- Class: mult_question
+  Output: Given training data with M samples leave one out validation leaves
+    one point out of the training set, trains the model on all the other points
+    and then predicts the left out point and measures the metric for this prediction.
+    This procedure is then averaged for all points in the training data. What
+    validation method discussed in this lesson is this equivalent to.
+  AnswerChoices: M-fold cv; (M-1)-fold cv; createDataPartition with p = 1/M;
+    It cannot be represented as a method from this lesson
+  CorrectAnswer: M-fold cv
+  AnswerTests: omnitest(correctVal="M-fold cv")
+  Hint: Repeating the procedure for every training sample means repeating it M
+    times.
+
+- Class: text
+  Output: This concludes this lesson. You now have an overview over the basic
+    validation strategies and know how to use them in caret.
