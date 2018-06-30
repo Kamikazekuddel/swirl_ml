@@ -8,7 +8,7 @@ library(mlbench)
 library(caret)
 data("BostonHousing")
 
-set.seed(42)
+set.seed(37)
 train_idx <- createDataPartition(BostonHousing$medv,list=FALSE)
 training_set <- BostonHousing[train_idx,]
 testing_set <- BostonHousing[-train_idx,]

@@ -1,4 +1,4 @@
-﻿- Class: meta
+- Class: meta
   Course: Machine Learning
   Lesson: caret Basics
   Author: Konrad Wölms
@@ -39,11 +39,13 @@
 
 - Class: cmd_question
   Output: To demonstrate the strength of caret we will
-    now train two simple models on the BonstonHousing
+    now train two simple models on the BostonHousing
     dataset from the mlbench package. We loaded the dataset
     for you and provided the variables X_train, y_train,
-    X_test and y_test for you. To get a feeling for the
-    data type str(X_train).
+    X_test and y_test for you.
+    Note that we follow a common convention
+    where the X is capital case and the y lower case.
+    To get a feeling for the data type str(X_train).
   CorrectAnswer: str(X_train)
   AnswerTests: omnitest(correctExpr='str(X_train)')
   Hint: Type "str(X_train)"
@@ -60,7 +62,7 @@
     The target corresponds to the median value of owner-occupied homes in
     thousands of USD. So the purpose of this regression problem is to predict
     housing prices. More information on the dataset can be found in the help
-    by typing '?BonstonHousing'.
+    by typing '?BostonHousing'.
     
 - Class: cmd_question
   Output: We will now train our first regression model. For this use the
@@ -117,7 +119,7 @@
 
 - Class: figure
   Output: We've added the predictions of the second model to the plot in red.
-    One can see a qualitatively that the predictions and their accuracy differ,
+    One can see qualitatively that the predictions and their accuracy differ,
     and we'll quantify this in future lessons.
   Figure: secondModelPoints.R
   FigureType: add

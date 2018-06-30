@@ -13,10 +13,11 @@
     
 - Class: text
   Output: We'll again use the Boston housing data and train the model on the training
-    set X_train,y_train. We also have a test set X_test,y_test as a proxy for
+    set X_train,y_train (remember captial case X lower case y).
+    We also have a test set X_test,y_test as a proxy for
     unseen data. Our concrete goal is now to estimate how well the model will
     perform on the test set using only the train set. Eventually we'll compare with
-    the performance on the test set in order see how well our validation methods
+    the performance on the test set in order to see how well our validation methods
     work.
 
 - Class: text
@@ -140,7 +141,7 @@
 - Class: cmd_question
   Output: Now again train a regression tree (method 'rpart') on X_train/y_train
     using cv_cntrl as the trControl argument. Additionally supply the
-    tuneGrid = tree_grid argument. Don't store the result in the variable mdl.
+    tuneGrid = tree_grid argument. Store the result in the variable mdl.
   CorrectAnswer: mdl<-train(X_train,y_train,method='rpart',trControl=cv_cntrl,tuneGrid=tree_grid)
   AnswerTests: omnitest(correctExpr="mdl<-train(X_train,y_train,method='rpart',trControl=cv_cntrl,tuneGrid=tree_grid)")
   Hint: Type "mdl<-train(X_train,y_train,method='rpart',trControl=cv_cntrl,tuneGrid=tree_grid)"
@@ -158,8 +159,8 @@
     RMSE error across the folds. This stands for root mean squared error so we
     can simply square it to relate it to mse, which we've been using so far.
     We see that our validation error is a little more conservative than before
-    but still not as big as the test error. Especially for small dataset we don't
-    have any guarantees that at how accurately we can predict the test error.
+    but still not as big as the test error. Especially for small datasets we don't
+    have any guarantees for how accurately we can predict the test error.
 
 - Class: text
   Output: Generally in order to predict the test error, the distribution of training
@@ -168,7 +169,7 @@
     error should not be an issue and differences in the data’s train and test distribution will likely have systematic reasons.
     
 - Class: mult_question
-  Output: Let us conclude this lesson with a few test questions. Many time does
+  Output: Let us conclude this lesson with a few test questions. How many times does
     caret's train function train the model when you use n-fold cv.
   AnswerChoices: 1 time;2 times;n times, once for each fold;
     n+1 times, once for each fold and once for all the data
@@ -178,7 +179,7 @@
     all training data should be used to make out of sample predictions.
 
 - Class: mult_question
-  Output: Given training data with M samples leave one out validation leaves
+  Output: Given training data with M samples 'leave one out validation' leaves
     one point out of the training set, trains the model on all the other points
     and then predicts the left out point and measures the metric for this prediction.
     This procedure is then averaged for all points in the training data. What

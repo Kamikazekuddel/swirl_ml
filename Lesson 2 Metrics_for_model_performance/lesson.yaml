@@ -1,4 +1,4 @@
-﻿- Class: meta
+- Class: meta
   Course: Machine_Learning
   Lesson: Metrics for Model Performance
   Author: Konrad Wölms
@@ -14,9 +14,10 @@
 
 - Class: cmd_question
   Output: Before we start with this topic let's quickly recap the command's from
-    of the last lesson. We again supplied you with a training set X_train,y_train
-    from the Boston housing data. Train a tree model on this data using the
-    'rpart' method and set trControl to cntrl and tuneGrid to tree_grid as is the
+    the last lesson. We again supplied you with a training set X_train,y_train
+    from the Boston housing data (remember captial case X lower case y).
+    Train a tree model on this data using the
+    'rpart' method and set trControl to cntrl and tuneGrid to tree_grid as in the
     previous lesson. The last two settings will keep train's functionality simple
     for now. Assign the final result to a variable mdl_tree.
   
@@ -49,7 +50,7 @@
 
 - Class: text
   Output: A common metric for regression problems is mean square error (mse).
-    It is calculated the mean of the squares of differences between predictions
+    It is calculated as the mean of the squares of differences between predictions
     and ground truth values. For mse lower values are always better than larger
     ones. Such metrics are sometimes also referred to as loss functions,
     such that the previous sentence rephrases to the intuitive statement
@@ -59,7 +60,7 @@
   Output: Try to calculate mse now for y_pred_tree1. Remember that the
     ground truth is stored in y_test.
   CorrectAnswer: mean((y_test-y_pred_tree1)^2)
-  AnswerTests: omnitest(correctVal=mean((y_test-y_pred_tree1)^2))
+  AnswerTests: val_has_length(1) & omnitest(correctVal=mean((y_test-y_pred_tree1)^2))
   Hint: One possibility would be "mean((y_test-y_pred_tree1)^2)"
 
 - Class: cmd_question
@@ -68,18 +69,21 @@
     are used instead of absolute differences. Try to calculate pmse for y_pred_tree1.
     Remember relavtive differences -> square -> average.
   CorrectAnswer: mean((y_pred_tree1/y_test - 1)^2)
-  AnswerTests: omnitest(correctVal= mean((y_pred_tree1/y_test - 1)^2))
+  AnswerTests: val_has_length(1) & omnitest(correctVal= mean((y_pred_tree1/y_test - 1)^2))
   Hint: One possibility would be "mean((y_pred_tree1/y_test - 1)^2))"
 
 - Class: cmd_question
-  Output: Unfortunately these absolute metrics don't tell us very much. Also
-    comparing two different metrics for the same model is not particularly
-    meaningful. On the other hand we can now use these metrics to compare
-    our two different predictions. We already performed the calculations for
+  Output: Unfortunately calculating one or several metrics for a single model
+    is not very meaningful, because there is no project-indipendent absolute scale
+    for any metric. Instead we usually compare several models with one
+    metric. We may then repeat this comparison with other metrics if required.
+    In that spirit we preceed and compare
+    the predictions of our two different models using the metrics we just introduced.
+    We have already performed the calculations for
     you and stored the results in the variable model_comp. Type this variable
     into the prompt in order to see the content.
   CorrectAnswer: model_comp
-  AnswerTests: omnitest(correctVal= model_comp)
+  AnswerTests:  omnitest(correctExpr = 'model_comp')
   Hint: Type "model_comp"
   
 - Class: text
@@ -96,7 +100,7 @@
     pmse for a concrete example. Under mse a prediction of $400K while the ground
     truth is $200K is just as bad as a prediction of $1,200K while the ground
     truth is $1,000K. Under pmse the former would be 5 times as bad as the latter.
-    Which metric is preferred will depend on the particular but it will be a crucial
+    Which metric is preferred will depend on the particular project and it will be a crucial
     decision.
     
 
@@ -119,11 +123,11 @@
     have to predict on X_train using the model mdl_tree and the ground truth 
     is given by y_train.
   CorrectAnswer: mse(y_train,predict(mdl_tree,X_train))
-  AnswerTests: omnitest(correctVal= mse(y_train,predict(mdl_tree)))
+  AnswerTests: val_has_length(1) & omnitest(correctVal= mse(y_train,predict(mdl_tree)))
   Hint: Type "mse(y_train,predict(mdl_tree,X_train))"
 
 - Class: text
-  Output: This is clearly a lot lower than our test metric earlier. So it is does
+  Output: This is clearly a lot lower than our test metric earlier. So it does
     not help us much in predicting how well our model will do on unseen data. More
     advanced techniques are needed to estimate this. It is the subject of model
     validation and will be addressed in the next lesson.
@@ -150,7 +154,7 @@
   Output: Imagine you have a project where you need to make predictions using
     regression. From the project side it is clear that the adverse effect of the
     prediction errors proportional to the absolute deviation from the ground truth.
-    value. What would most likely be a good choice for a model performance metric.
+    What would most likely be a good choice for a model performance metric.
   AnswerChoices: Mean squared error (MSE), mean((y_pred-y_true)^2);
     Percentage mean squared error (PMSE), mean((y_pred/y_true - 1)^2);
     Mean absolute error (MAE), mean(abs(y_pred-y_true));
